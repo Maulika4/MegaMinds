@@ -1,0 +1,371 @@
+﻿@model  IEnumerable<RegistrationForm.Models.User>
+@{
+    ViewBag.Title = "Index";
+    int Count = 0;
+}
+
+
+
+<br />
+
+<div class="container">
+    <div class="clearfix"></div>
+    <fieldset>
+        <legend class="legend">All User</legend>
+        <div class="panel">
+            <div class="panel-body">
+                <div>
+                    <button type="button" class="btn btn-info btn-pressure" id="btnadduser">
+                        Add User
+                    </button>
+
+                </div>
+                <div style="margin-top: 10px"></div>
+                <div id="div_content" class="col-md-12">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bRawItemed DT_bootstrap tbl table-green">
+                            <thead>
+                                <tr>
+                                    <th class="hidden">id</th>
+                                    <th>
+                                        Sr.No
+                                    </th>
+                                    <th>
+                                        @Html.DisplayName("Name")
+                                    </th>
+                                    <th>
+                                        @Html.DisplayName("Email")
+                                    </th>
+                                    <th>
+                                        @Html.DisplayName("Phone")
+                                    </th>
+                                    <th style="width:120px">action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Count() <= 0)
+                                {
+                                    <tr><td colspan="6"> No data available in table</td></tr>
+                                }
+                                else
+                                {
+                                    foreach (var item in Model)
+                                    {
+                                        Count++;
+                                        <tr>
+                                            <td class="hidden">@item.Id</td>
+                                            <td>
+                                                @Html.Raw(@Count)
+                                            </td>
+                                            <td>
+                                                @Html.Raw(@item.Name)
+                                            </td>
+                                            <td>
+                                                @Html.Raw(@item.Email)
+                                            </td>
+                                            <td>
+                                                @Html.Raw(@item.Phone)
+                                            </td>
+                                            <td>
+                                                <a title="edit" class="glyphicon glyphicon-pencil btn btn-success btn-small" onclick="EditUser(@item.Id,'@item.Name','@item.Email','@item.Phone','@item.Address',@item.StateId,@item.CityId);"></a>
+                                                <a title="delete" class="glyphicon glyphicon-trash btn btn-danger btn-small" onclick="DeleteItem(@item.Id);"></a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </fieldset>
+</div>
+<div class="modal fade" tabindex="-1" id="userdata" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userdatatittle">Add User</h5>
+                <button type="button" class="close pull-right" data-dismiss="modal"
+                        aria-hidden="true">
+                    &times;
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <input type="hidden" value="0" id="Id" />
+                        <div class="col-md-4 col-sm-4">
+                            Name
+                        </div>
+                        <div class="col-md-5 col-sm-5">
+                            @Html.TextBox("Name", null, new { @class = "form-control" })
+                            <span class="alert-danger" style="display:none" id="spName">Please Enter Name</span>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-4 col-sm-4">
+                            Email
+                        </div>
+                        <div class="col-md-5 col-sm-5">
+                            @Html.TextBox("Email", null, new { @class = "form-control" })
+                            <span class="alert-danger" style="display:none" id="spEmail">Please Enter Email</span>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-4 col-sm-4">
+                            Phone Number
+                        </div>
+                        <div class="col-md-5 col-sm-5">
+                            @Html.TextBox("Phone", null, new { @class = "form-control", onkeypress = "return isNumber(event)", MaxLength = 10 })
+                            <span class="alert-danger" style="display:none" id="spPhone">Please Enter Phone Number</span>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-4 col-sm-4">
+                            Address
+                        </div>
+                        <div class="col-md-5 col-sm-5">
+                            @Html.TextArea("Address", null, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-4 col-sm-4">
+                            State
+                        </div>
+                        <div class="col-md-5 col-sm-5">
+                            @Html.DropDownList("StateId", new SelectList(ViewBag.StateList, "Id", "StateName"), new { @class = "form-control" })
+                            <span class="alert-danger" style="display:none" id="spState">Please Select State</span>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-4 col-sm-4">
+                            City
+                        </div>
+                        <div class="col-md-5 col-sm-5">
+                            @Html.DropDownList("CityId", new SelectList(new List<RegistrationForm.Models.City>(), "Id", "CityName"), new { @class = "form-control" })
+                            <span class="alert-danger" style="display:none" id="spCity">Please Select City</span>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-1 col-sm-1">
+                            Agree?
+                        </div>
+                        <div class="col-md-11 col-sm-11">
+                            <input type="checkbox" id="chkagree" />
+                            <span class="alert-danger" style="display:none" id="spagree">Please check Agree</span>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <span class="alert-success" style="display:none" id="spsuccessmsg">Record Save Successfully</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" id="btnsubmit" class="btn btn-info btn-pressure">Submit</button>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+<script>
+    var city = 0;
+    var IsEdit = 0;
+    $(document).ready(function () {
+        $("#StateId").change(function (key, val) {
+            var stateid = $('option:selected', this).val();
+            $("#CityId").empty();
+            if (stateid != "" || stateid != null ||stateid != "0") {
+                $.ajax({
+                    type: 'POST',
+                    url: '/Registration/Getcity',
+                    dataType: 'json',
+                    data: {
+                        stateid: stateid
+                    },
+                    success: function (details) {
+                        $("#CityId").append("<option value=''>Select City</option>");
+                        for (var i = 0; i < details.length; i++) {
+                            var id = details[i]['Id'];
+                            var name = details[i]['CityName'];
+                            $("#CityId").append("<option value='" + id + "'>" + name + "</option>");
+                        }
+                        if (IsEdit == 1) {
+                            $("#CityId").val(city);
+                        }
+                    },
+                    error: function (ex) {
+                        alert('Failed to retrieve City detail.' + ex);
+                    }
+                });
+            }
+        });
+        $("#btnadduser").click(function (key, val) {
+            $("#StateId").val("");
+            $("#Id").val(0);
+            $("#Name").val("");
+            $("#Email").val("");
+            $("#Phone").val("");
+            $("#Address").val("");
+            $("#CityId").val("");
+            $("#spName").hide();
+            $("#spEmail").hide();
+            $("#spPhone").hide();
+            $("#spState").hide();
+            $("#spCity").hide();
+            $("#spagree").hide();
+            $("#userdatatittle").text("Add User");
+            $("#userdata").modal('show');
+        });
+        $("#btnsubmit").click(function (key, val) {
+            var Valid = true;
+            $("#spName").hide();
+            $("#spEmail").hide();
+            $("#spPhone").hide();
+            $("#spState").hide();
+            $("#spCity").hide();
+            $("#spagree").hide();
+            var id = $("#Id").val();
+            var name = $("#Name").val();
+            var Email = $("#Email").val();
+            var Phone = $("#Phone").val();
+            var Address = $("#Address").val();
+            var stateid = $("#StateId").val();
+            var Cityid = $("#CityId").val();
+            var agree = $("#chkagree").prop("checked");
+            if (name == "") {
+                $("#spName").show();
+                Valid = false;
+            }
+            if (Email == "") {
+                $("#spEmail").show();
+                Valid = false;
+            }
+            else {
+                if (!(isValidEmail(Email))) {
+
+                    $("#spEmail").text('Enter Valid Email Id');
+                    $("#spEmail").show();
+                    Valid = false;
+                }
+            }
+            if (Phone == "") {
+                $("#spPhone").show();
+                Valid = false;
+            }
+            else {
+                if (Phone.length < 10) {
+
+                    $("#spPhone").text('Enter Valid Phone Number');
+                    $("#spPhone").show();
+                    Valid = false;
+                }
+            }
+            if (stateid == "" || stateid == "0") {
+                $("#spState").show();
+                Valid = false;
+            }
+            if (Cityid == "" || Cityid == null) {
+                $("#spCity").show();
+                Valid = false;
+            }
+
+            if (agree == false && Valid == true) {
+
+                $("#spagree").show();
+                Valid = false
+            }
+            if (Valid) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/Registration/SaveUserData',
+                    dataType: 'json',
+                    data: {
+                        Id: id, Name: name, Email: Email, Phone: Phone, Address: Address, StateId: stateid, CityId: Cityid
+                    },
+                    success: function (result) {
+                        if (result != 0) {
+                            $("#spsuccessmsg").show();
+                            setTimeout(function () {
+                                location.reload(true);
+                            }, 5000);
+                        }
+                        else {
+                            alert("Please Try Again");
+                        }
+                    },
+                    error: function (ex) {
+                        alert('Failed to save User Details.' + ex);
+                    }
+                });
+            }
+
+        });
+
+
+    });
+     function DeleteItem(id) {
+         /*-----------------------------------------*/
+     
+            bootbox.confirm("<h5>" + "Are you sure you want to remove this Record? </h5>", function (result) {
+                if (result) {
+                    $.post('@Url.Action("DeleteUser", "Registration")', { "Id": id }, function (data) {
+                        if (data.status == "1") {
+                            bootbox.alert("<h5> Success:" + data.Message + "</h5>");
+                            setTimeout(function () {
+                                location.reload(true);
+                            }, 5000);
+                        }
+                        else {
+                            bootbox.alert("<h5> Info:" + data.Message+ "</h5>");
+                        }
+                    });
+
+                }
+            });
+                    /*-----------------------------------------*/
+
+    }
+    function EditUser(id, Name, Email, Phone, Address, StateId, CityId) {
+        $("#StateId").val(parseInt(StateId));
+        city = CityId;
+        IsEdit = 1;
+        $("#StateId").trigger('change');
+        $("#Id").val(id);
+        $("#Name").val(Name);
+        $("#Email").val(Email);
+        $("#Phone").val(Phone);
+        $("#Address").val(Address);
+        $("#CityId").val(parseInt(CityId));
+        $("#userdatatittle").text("Edit User");
+        $("#userdata").modal('show');
+    }
+    function isValidEmail(email) {
+        var expr = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+        return expr.test(email);
+    }
+
+    function isNumber(evt) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+
+    }
+</script>
